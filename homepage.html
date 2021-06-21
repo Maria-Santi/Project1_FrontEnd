@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Reimbursement System Home</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vidaloka&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<style>
+body {
+    background-image: url('books2.jpeg');
+    background-size: cover;
+    font-family: 'Vidaloka', serif;
+}
+.container {
+  background-color: slategray;
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr 1fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "homepage homepage homepage"
+    "homepage homepage homepage"
+    "homepage homepage homepage"; 
+}
+
+.homepage {
+
+  display: grid; 
+  grid-template-columns: 0.3fr 1.7fr 1fr 0.8fr 2.7fr 0.3fr; 
+  grid-template-rows: 1fr 0.2fr 1.8fr 1.4fr 0.6fr 1fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    ". title title title title ."
+    ". . . . . ."
+    ". managerLogin managerLogin . employeeLogin ."
+    ". managerLogin managerLogin . employeeLogin ."
+    ". . . . . ."
+    ". . . . . ."; 
+  grid-area: homepage; 
+}
+
+.title {
+    border: 20px double rgba(0, 0, 0, 0.473);
+    grid-area: title;
+    text-align: center;
+    color: black;
+    padding: 15px;
+    margin-top: 25px;
+    background-color:slategray;   
+}
+
+.managerLogin { 
+    border: 20px double rgba(0, 0, 0, 0.473);
+    background-image: url("bookshelf-depth.jpeg");
+    background-size: cover;
+    display: grid; 
+    grid-template-columns: 0.7fr 1.3fr 1.2fr 0.8fr; 
+    grid-template-rows: 0.6fr 1.4fr 1.3fr 0.7fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+        ". . . ."
+        ". mLogin mLogin ."
+        ". mLogin mLogin ."
+        ". . . ."; 
+    grid-area: managerLogin; 
+}
+.mLogin { 
+    border: 20px solid rgba(0, 0, 0, 0.473);
+    grid-area: mLogin;
+    background-color:slategray;
+    color: black;
+    padding: 35px;
+    margin: 0 auto;
+    height: fit-content;}
+
+.employeeLogin { 
+    border: 20px double rgba(0, 0, 0, 0.473);
+    background-image: url("bookshelf-depth.jpeg");
+    background-size: cover;
+    display: grid; 
+    grid-template-columns: 0.7fr 1.3fr 1.3fr 0.7fr; 
+    grid-template-rows: 0.6fr 1.4fr 1.3fr 0.7fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+        ". . . ."
+        ". eLogin eLogin ."
+        ". eLogin eLogin ."
+        ". . . ."; 
+    grid-area: employeeLogin; 
+}
+
+.eLogin { 
+    border: 20px solid rgba(0, 0, 0, 0.473);
+    grid-area: eLogin;
+    background-color:slategray;
+    color: black;
+    padding: 35px;
+    margin: 0 auto;
+    height: fit-content; }
+
+label {
+    display: block;
+    margin: 0 auto;
+}
+
+input {
+    display: block;
+}
+
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="homepage">
+          <div class="title">
+            <h1>novelVerse Expense Reimbursement System</h1>
+            <p>Where book characters can ask their respective authors for reimbursments regarding situations in the book plot</p>
+            <p>Please sign in to continue</p>
+          </div>
+          <div class="managerLogin">
+              <div class="mLogin">
+                <label for="mEmail">Manager Email:</label>
+                <input name="mEmail" type="text" id="managerEmail">
+                <label for="mPass">Password:</label>
+                <input name="mPass" type="password" id ="managerPass"> 
+                <button style="margin-top: 10px;" type="button" class="btn btn-success" id="manLogin" onclick="managerLogin()">Manager Login</button>
+              </div>
+          </div>
+          <div class="employeeLogin">
+              <div class="eLogin">
+                <label for="eEmail">Employee Email:</label>
+                <input name="eEmail" type="email" id="employeeEmail">
+                <label for="ePass">Password:</label>
+                <input name="ePass" type="password" id ="employeePass">
+                <button style="margin-top: 10px;" type="button" class="btn btn-success" id= "empLogin" onclick="employeeLogin()">Employee Login</button>
+              </div> 
+          </div>
+        </div>
+      </div>    
+</body>
+<script>
+    const managerEmail = document.getElementById("managerEmail");
+    const managerPassword = document.getElementById("managerPass");
+
+    const employeeEmail = document.getElementById("employeeEmail");
+    const employeePasssword = document.getElementById("employeePass")
+
+    async function managerLogin(){
+
+        const email = managerEmail.value;
+        localStorage.setItem("email", email)
+        const pass = managerPassword.value
+
+        const response = await fetch(`http://localhost:5000/managers`) 
+        const managers = await response.json()
+    
+        for (let manager of managers){ 
+
+            if(email == manager.managerEmail) {
+
+                if(pass == manager.managerPassword){
+                    const user = managerEmail.value.replace(/\@.*/,'');
+                    localStorage.setItem("user", user)
+                    window.location.href = `managerDashboard.html?user=${user}`;
+                    localStorage.setItem("managerID", manager.managerID)
+                }
+                else {
+                    alert("Wrong password!")
+                }
+            }
+        }   
+    }
+
+    async function employeeLogin(){
+
+        const email = employeeEmail.value;
+        localStorage.setItem("email", email)
+        const pass = employeePasssword.value
+
+        const response = await fetch(`http://localhost:5000/employees`) 
+        const employees = await response.json()
+    
+        for (let emp of employees){ 
+
+            if(email == emp.employeeEmail) {
+
+                if(pass == emp.employeePassword){
+                    const user = employeeEmail.value.replace(/\@.*/,'');
+                    localStorage.setItem("user", user)
+                    window.location.href = `employeeDashboard.html?user=${user}`;
+        
+                    localStorage.setItem("empID", emp.employeeID)
+                    localStorage.setItem("managerID", emp.managerID)
+                }
+                else {
+                    alert("Wrong password!")
+                }
+            }
+        }   
+    }
+
+</script>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manager Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vidaloka&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<style>
+
+body {
+  background-image: url("books-managers.jpeg");
+  background-size: cover;
+  font-family: 'Vidaloka', serif;
+}
+
+.container {
+  background-color: slategrey;
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr 1fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "managers managers managers"
+    "managers managers managers"
+    "managers managers managers"; 
+}
+
+.managers {
+  display: grid; 
+  grid-template-columns: 0.1fr 0.1fr 6.1fr 0.1fr 0.1fr; 
+  grid-template-rows: 0.6fr 0.1fr 2.5fr 0.1fr 2.5fr 0.2fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    ". managerIntro managerIntro managerIntro ."
+    ". . . . ."
+    ". allRequests allRequests allRequests ."
+    ". . . . ."
+    ". . statistics . ."
+    ". . . . ."; 
+  grid-area: managers; 
+}
+
+.managerIntro { 
+    border: 20px double rgba(0, 0, 0, 0.473);
+    grid-area: managerIntro;
+    text-align: center;
+    color: black;
+    padding: 15px;
+    margin-top: 25px;
+    background-color: lightslategray;
+    }
+
+.allRequests {
+  border: 20px double rgba(0, 0, 0, 0.473);  
+  background-image: url("books4.jpg");  
+  background-size: cover;
+  display: grid; 
+  grid-template-columns: 0.8fr 1.2fr 1.2fr 0.8fr; 
+  grid-template-rows: 0.6fr 1.4fr 1.3fr 0.7fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    ". . . ."
+    ". requestsTable requestsTable ."
+    ". requestsTable requestsTable ."
+    ". . . ."; 
+  grid-area: allRequests; 
+}
+
+.selectRequests {
+  position: relative;
+}
+
+select {
+  background-color:azure;
+  border-radius: 25px;
+  margin-top: 15px;
+  margin-left: 10px;
+}
+
+.requestsTable { 
+    text-align: center;
+    grid-area: requestsTable;
+    background-color: lightslategray; }
+
+.statistics {
+  border: 20px double rgba(0, 0, 0, 0.473);
+  background-color: rgba(0, 0, 0, 0.473);
+  text-align: center;
+  display: grid; 
+  grid-template-columns: 0.6fr 1.8fr 0.6fr; 
+  grid-template-rows: 0.4fr 2.2fr 0.4fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    ". . ."
+    ". chart1 ."
+    ". . ."; 
+  grid-area: statistics; 
+}
+
+.chart1 { grid-area: chart1; }
+
+
+</style>
+</head>
+<body>
+    <button style="float: right; margin: 15px;" type="button" class="btn btn-dark" id="logoutBtn" onclick="logout()">Logout</button>
+    <div class="container">
+        <div class="managers">
+        <div class="managerIntro">
+            <h1>Manager Dashboard</h1>
+        </div>
+        <div class="allRequests">
+            <div style="margin-left: 10px;" class="dropdown">
+                <button style="margin-top: 10px;" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuRequests" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By:</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                  <button id="Pending" class="dropdown-item" type="button" onclick="getRequests('Pending')">Pending Requests</button>
+                  <button id="Past" class="dropdown-item" type="button" onclick="getRequests('Past')">Past Requests</button>
+                  <button id="All" class="dropdown-item" type="button" onclick="getRequests('')">All Requests</button>
+                </div>
+            </div>
+          <div class="requestsTable">
+            <table id = "table" class = "table">
+                <caption id="tableCaption" style="color: black;">Requests Table</caption>
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Employee ID</th> 
+                    <th scope="col">Request ID</th>
+                    <th scope="col">Reason</th>
+                    <th scope = "col">Amount</th>
+                    <th scope = "col">Status</th>
+                    <th scope="col">Resolve</th>
+                  </tr>
+                </thead>
+                <tbody id="tableRequests">
+
+                </tbody>
+              </table>
+          </div>
+        </div>
+        <div class="statistics">
+          <div class="chart1">
+            <div id="piechart_3d" style="width: 600px; height: 300px;"></div>
+            <button style="margin-top: 15px;" type="button" class="btn btn-info" id="statsBtn" onclick="window.location.href = `employeeStatistics.html?user=${localStorage.getItem('user')}`">View All Employee Statistics</button>
+          </div>
+        </div>
+        </div>
+      </div>
+
+<!--bootstrap-->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+
+</body>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+       
+        async function getStatistics(){
+            const response = await fetch(`http://localhost:5000/managers/${localStorage.getItem("managerID")}/statistics`)
+            const stat = await response.json()
+
+            let data = google.visualization.arrayToDataTable([
+            ['Employee', 'Sum'],
+            [stat[0].employeename, stat[0].sum],
+            [stat[1].employeename, stat[1].sum],
+            [stat[2].employeename, stat[2].sum]
+            ]);
+
+            const options = {
+                title: 'Top 3 Employee Statistics',
+                is3D: true,
+            };
+
+            let chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+            chart.draw(data, options);
+        }
+
+        getStatistics();
+    }
+
+</script>
+<script>
+
+    const tableRequests = document.getElementById("tableRequests");
+    const managerMessage = document.getElementById("message-text");
+
+    async function getRequests(status = ""){
+
+        if (status == "Pending"){
+            // throws a 404 error if there are no requests but does not crash page
+            const response = await fetch(`http://localhost:5000/managers/${localStorage.getItem("managerID")}/requests?status=Pending`)
+            const requests = await response.json()
+            
+            if (response.status === 404){
+                tableRequests.innerHTML = "";
+            }
+            else {
+                let innerRows = ""
+                for(let request of requests) {
+                    innerRows += `
+                    <tr>
+                    <td>${request.employeeID}</td>
+                    <td>${request.requestID}</td>
+                    <td>${request.reason}</td>
+                    <td>$${request.amount}</td>
+                    <td>${request.requestStatus}</td>
+                    <td>
+                        <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Choose:</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <button id="Approve" class="dropdown-item" type="button" onclick="requestApproveDeny('Approved', ${request.employeeID}, ${request.requestID})">Approve</button>
+                        <button id="Deny" class="dropdown-item" type="button" onclick="requestApproveDeny('Denied', ${request.employeeID}, ${request.requestID})">Deny</button>
+                        </div>
+                        </div>
+                    </td>
+                    </tr>`
+                    tableRequests.innerHTML = innerRows;
+                } 
+            }
+        }
+
+        else if (status == "Past"){
+
+            const response = await fetch(`http://localhost:5000/managers/${localStorage.getItem("managerID")}/requests?status=Past`)
+            const requests = await response.json()
+
+            if(response.status === 404){
+                tableRequests.innerHTML = "";
+            }
+            else {
+                let innerRows = ""
+                for(let request of requests) {
+                    innerRows += `<tr>
+                    <td>${request.employeeID}</td>    
+                    <td>${request.requestID}</td>
+                    <td>${request.reason}</td>
+                    <td>$${request.amount}</td>
+                    <td>${request.requestStatus}</td>
+                    </tr>`
+                    tableRequests.innerHTML = innerRows;
+                }
+            }
+        }
+
+        else {
+            const response = await fetch(`http://localhost:5000/managers/${localStorage.getItem("managerID")}/requests`)
+            const requests = await response.json()
+
+            if(response.status === 404){
+                tableRequests.innerHTML = "";
+            }
+            else {
+                let innerRows = ""
+                for(let request of requests) {
+
+                    if (request.requestStatus == "Pending"){
+
+                        innerRows += `<tr>
+                        <td>${request.employeeID}</td>
+                        <td>${request.requestID}</td>
+                        <td>${request.reason}</td>
+                        <td>$${request.amount}</td>
+                        <td>${request.requestStatus}</td>
+                        <td>
+                            <div class="dropdown">
+                            <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Choose:</button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <button id="Approve" class="dropdown-item" type="button" onclick="requestApproveDeny('Approved', ${request.employeeID}, ${request.requestID})">Approve</button>
+                            <button id="Deny" class="dropdown-item" type="button" onclick="requestApproveDeny('Denied', ${request.employeeID}, ${request.requestID})">Deny</button>
+                            </div>
+                            </div>
+                        </td>
+                        </tr>`
+                        tableRequests.innerHTML = innerRows;
+                    }
+
+                    else {
+                        innerRows += `<tr>
+                        <td>${request.employeeID}</td>    
+                        <td>${request.requestID}</td>
+                        <td>${request.reason}</td>
+                        <td>$${request.amount}</td>
+                        <td>${request.requestStatus}</td>
+                        </tr>`
+                        tableRequests.innerHTML = innerRows;
+                    }
+                }
+            }
+        }
+
+    }
+
+    async function requestApproveDeny(r_status = "", empID = 0, requestID = 0){
+
+        let messageText = prompt("Would you like to send a message to the employee?");
+            if(messageText == null || messageText == "") {
+                // had to make these variables var in order to access it below
+                var r_message = ""
+            }
+            else {
+                var r_message = messageText;
+            }
+
+        const request_update = {
+            status: r_status,
+            requestMessage: r_message
+        }
+
+        const config = {
+            method:"PATCH",
+            headers:{'Content-Type':"application/json"},
+            body: JSON.stringify(request_update)
+        }
+
+        const response = await fetch(`http://localhost:5000/managers/${localStorage.getItem("managerID")}/employees/${empID}/requests/${requestID}`, config)
+
+        if (response.status === 200) {
+            alert("The request was resolved");
+        }
+        else {
+            alert("The request could not be resolved");
+        }
+
+        getRequests("Pending");
+
+    }
+
+    function logout(){
+        localStorage.clear();
+        window.location.href = 'homepage.html'
+    }
+
+    window.onload = getRequests("Pending");
+</script>
+</html>

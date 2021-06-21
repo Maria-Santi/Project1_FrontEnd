@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Employee Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vidaloka&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<style>
+
+
+body {
+  background-image: url('books-employee.jpeg');
+  background-size: cover;
+  font-family: 'Vidaloka', serif;
+}
+
+.container {
+  background-color: slategrey;
+  display: grid; 
+  grid-template-columns: 0.1fr 2.8fr 1fr 3.7fr 0.1fr; 
+  grid-template-rows: 0.2fr 0.7fr 0.2fr 2.9fr 0.2fr 1.8fr 1fr 1.6fr 0.4fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    ". . . . ."
+    "employeeIntro employeeIntro employeeIntro employeeIntro employeeIntro"
+    ". . . . ."
+    "submitRequest submitRequest submitRequest submitRequest submitRequest"
+    ". . . . ."
+    ". allRequests allRequests allRequests ."
+    ". allRequests allRequests allRequests ."
+    ". allRequests allRequests allRequests ."
+    ". . . . ."; 
+}
+
+.employeeIntro { 
+    grid-area: employeeIntro;
+    text-align: center;
+    padding: 15px;
+    color:black;
+    background-color: lightslategray;
+    border: 20px double rgba(0, 0, 0, 0.473);
+  }
+
+.submitRequest {
+  background-image: url("books4.jpg");
+  background-size: cover;
+  border: 20px double rgba(0, 0, 0, 0.521);
+  display: grid; 
+  grid-template-columns: 1.2fr 0.8fr 1fr 1fr; 
+  grid-template-rows: 0.4fr 1.6fr 1.6fr 0.4fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    ". . . ."
+    ". submitRequestForm submitRequestForm ."
+    ". submitRequestForm submitRequestForm ."
+    ". . . ."; 
+  grid-area: submitRequest; 
+}
+
+.submitRequestForm {
+  border: 20px solid rgba(0, 0, 0, 0.521);
+  background-color:lightslategrey;
+  color: black;
+  grid-area: submitRequestForm;
+  padding: 15px;
+}
+
+form {
+    display: inline-block;
+}
+
+label{
+    display: inline-block;
+    text-align: right;
+    width: 110px;
+    margin: 0 auto;
+}
+
+input {
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#submitBtn{
+    background-color: rgb(4, 170, 4);
+}
+
+.allRequests {
+  border: 20px double rgba(0, 0, 0, 0.473);
+  background-color: rgba(0, 0, 0, 0.514);
+  display: grid; 
+  grid-template-columns: 0.6fr 1.4fr 1fr 1.6fr 0.4fr; 
+  grid-template-rows: 0.8fr 1.2fr 1fr 1.4fr 0.6fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    ". dropDown . . ."
+    ". requestsTable requestsTable requestsTable ."
+    ". requestsTable requestsTable requestsTable ."
+    ". requestsTable requestsTable requestsTable ."
+    ". . . . ."; 
+  grid-area: allRequests; 
+}
+
+.selectRequests {
+  position: relative;
+}
+
+select {
+  background-color:azure;
+  border-radius: 25px;
+  margin-top: 15px;
+  margin-left: 10px;
+}
+
+.requestsTable { 
+  grid-area: requestsTable;
+  background-color:lightslategray;
+  text-align: center; }
+
+table, th, td {
+  border: 3px solid rgb(0, 0, 0);
+}  
+
+
+</style>
+</head>
+<body>
+  <button style="float: right; margin: 15px;" type="button" class="btn btn-dark" id="logoutBtn" onclick="logout()">Logout</button>
+    <div class="container">
+        <div class="employeeIntro">
+            <h1 id="loggedIn">Employee Dashboard</h1> 
+        </div>
+        <div class="submitRequest">
+          <div class="submitRequestForm">
+            <h5 style="text-align: center;">Submit A Request</h5>
+              <form name="submitForm" method="post">
+                  <div>
+                    <label for="requestReason">Reason:</label>
+                    <input name="requestReason" id="requestReasonInput" type="text">
+                  </div>
+                  <div>
+                    <label for="requestAmount" >Amount:</label>
+                    <input name="requestAmount" id="requestAmountInput" type="text">
+                  </div>
+                  <div>
+                    <label for="fileName">File:</label>
+                    <input style="margin-left: 120px;" name="fileName" type="file" id="requestFile">
+                  </div>
+                  <button type ="button" class="btn btn-secondary" style="margin-left: 140px;" id="submitRequestBtn" onclick="addRequest()">Submit Request</button>
+                </form>            
+          </div>
+        </div>
+        <div class="allRequests">
+          <div style="margin-left: 10px;" class="dropdown">
+            <button style="margin-top: 10px;" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuRequests" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By:</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+              <button id="Pending" class="dropdown-item" type="button" onclick="getRequests('Pending')">Pending Requests</button>
+              <button id="Past" class="dropdown-item" type="button" onclick="getRequests('Past')">Past Requests</button>
+              <button id="All" class="dropdown-item" type="button" onclick="getRequests('')">All Requests</button>
+            </div>
+            </div>
+          <div class="requestsTable">
+              <table class = "table">
+                <caption id="tableCaption" style="color: black;">Requests Table</caption>
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Request ID</th>
+                    <th scope="col">Reason</th>
+                    <th scope = "col">Amount</th>
+                    <th scope = "col">Status</th>
+                    <th scope="col">Message</th>
+                  </tr>
+                </thead>
+                <tbody id="tableRequests">
+
+                </tbody>
+              </table>
+          </div>
+          </div>
+        </div>
+
+<!--bootstrap-->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+
+</body>
+<script>
+  const tableRequests = document.getElementById("tableRequests");
+
+  const requestReasonInput = document.getElementById("requestReasonInput");
+  const requestAmountInput = document.getElementById("requestAmountInput");
+
+
+  async function addRequest(){
+
+    const r_request = {
+      requestID: 0,
+      employeeID: localStorage.getItem("empID"),
+      managerID: localStorage.getItem("managerID"),
+      amount: Number(requestAmountInput.value),
+      reason: requestReasonInput.value,
+      requestStatus: "",
+      requestMessage: ""
+    }
+    const config = {
+      method: "POST",
+      headers:{'Content-Type':"application/json"},
+      body: JSON.stringify(r_request)
+    }
+
+    if (requestReasonInput.value == null){
+      alert("You need to specify the reason for the request")
+    }
+    else if (requestAmountInput.value == null) {
+      alert("You need to specify the amount requested")
+
+    }
+
+    else {
+
+      const response = await fetch(`http://localhost:5000/managers/${localStorage.getItem("managerID")}/employees/${localStorage.getItem("empID")}/requests`, config)
+
+      if (response.status === 201){
+        alert("Your request was successfully submitted!")
+      }
+      else{
+        alert("Your request could not be submitted")
+      }
+
+      // resets the input fields to blank after it is submitted
+      document.forms['submitForm'].reset();
+      getRequests("Pending");
+    }
+  }
+
+  async function getRequests(status = ""){
+
+
+    if (status == "Pending"){
+      const response = await fetch(`http://localhost:5000/employees/${localStorage.getItem("empID")}/requests?status=Pending`)
+      const requests = await response.json()
+      if (response.status === 404) {
+        tableRequests.innerHTML = ""
+      }
+      else {
+        let innerRows = ""
+        for(let request of requests) {
+          innerRows += `<tr>
+            <td>${request.requestID}</td>
+            <td>${request.reason}</td>
+            <td>$${request.amount}</td>
+            <td>${request.requestStatus}</td>
+            <td>${request.requestMessage}</td>
+            </tr>`
+            tableRequests.innerHTML = innerRows;
+        }
+      }
+    
+    }
+
+    else if (status == "Past"){
+      const response = await fetch(`http://localhost:5000/employees/${localStorage.getItem("empID")}/requests?status=Past`)
+      const requests = await response.json()
+      if (response.status === 404) {
+        tableRequests.innerHTML = ""
+      }
+      else {
+        let innerRows = ""
+        for(let request of requests) {
+          innerRows += `<tr>
+            <td>${request.requestID}</td>
+            <td>${request.reason}</td>
+            <td>$${request.amount}</td>
+            <td>${request.requestStatus}</td>
+            <td>${request.requestMessage}</td>
+            </tr>`
+            tableRequests.innerHTML = innerRows;
+        }
+      }
+    }
+
+    else {
+      const response = await fetch(`http://localhost:5000/employees/${localStorage.getItem("empID")}/requests`)
+      const requests = await response.json()
+      if (response.status === 404) {
+        tableRequests.innerHTML = ""
+      }
+      else {
+        let innerRows = ""
+        for(let request of requests) {
+          innerRows += `<tr>
+            <td>${request.requestID}</td>
+            <td>${request.reason}</td>
+            <td>$${request.amount}</td>
+            <td>${request.requestStatus}</td>
+            <td>${request.requestMessage}</td>
+            </tr>`
+            tableRequests.innerHTML = innerRows;
+        }
+      }
+    }
+
+  }
+
+  function logout(){
+    localStorage.clear();
+    window.location.href = 'homepage.html'
+  }
+
+  window.onload = getRequests("Pending");
+
+</script>
+</html>

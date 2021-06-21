@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Employee Statistics</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vidaloka&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<style>
+
+body {
+    background-image: url("books-stats.jpeg");
+    background-size: cover;
+    font-family: 'Vidaloka', serif;
+}
+
+.container {
+    background-color: slategray;
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr; 
+    grid-template-rows: 1fr 1fr 1fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+        "employeeStatistics employeeStatistics employeeStatistics"
+        "employeeStatistics employeeStatistics employeeStatistics"
+        "employeeStatistics employeeStatistics employeeStatistics"; 
+}
+
+.employeeStatistics {
+    display: grid; 
+    grid-template-columns: 0.1fr 0.3fr 2.6fr 4fr 0.2fr 0.2fr; 
+    grid-template-rows: 0.6fr 0.1fr 2.3fr 1.5fr 0.5fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+        ". intro intro intro intro ."
+        ". . . . . ."
+        ". . stats stats . ."
+        ". . stats stats . ."
+        ". . . . . ."; 
+    grid-area: employeeStatistics; 
+}
+
+.intro { 
+    grid-area: intro;
+    background-color: slategrey;
+    text-align: center;
+    color: black;
+    padding: 15px;
+    margin-top: 25px;
+    border: 20px double rgba(0, 0, 0, 0.473); }
+
+.stats { 
+    background-color: rgba(0, 0, 0, 0.507);
+    text-align: center;
+    border: 20px double rgba(0, 0, 0, 0.473);
+    display: grid; 
+    grid-template-columns: 0.4fr 2.3fr 0.3fr; 
+    grid-template-rows: 0.2fr 1.8fr 0.2fr 2fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+        ". . ."
+        ". statsChart ."
+        ". . ."
+        ". chart2 ."; 
+    grid-area: stats; 
+}
+.statsChart { 
+    grid-area: statsChart;}
+
+.chart2 { 
+    grid-area: chart2;
+    margin: 0 auto;
+    margin-bottom: 25px; }
+
+</style>
+</head>
+<body>
+    <button style="float: right; margin: 15px;" type="button" class="btn btn-dark" id="logoutBtn" onclick="logout()">Logout</button>
+    <div class="container">
+        <div class="employeeStatistics">
+          <div class="intro">
+              <h1>Employee Statistics</h1>
+          </div>
+          <div class="stats">
+            <div class="statsChart">
+                <div style="text-align: center;" id="columnchart_material" style="width: 600px; height: 500px;"></div>
+            </div>
+            <div class="chart2">
+                <div id="piechart_3d" style="width: 600px; height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+</body>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+    google.charts.load('current', {'packages':['bar', 'corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+        async function getStatistics(){
+            const response = await fetch(`http://localhost:5000/statistics`)
+            const stats = await response.json()
+
+            // tried to do a for loop here to get the data but it did not work :/
+            // Column Chart
+            let data = google.visualization.arrayToDataTable([
+            ['Employee', 'Average', 'Max', 'Min'],
+            [stats[0].employeename + ' ' + stats[0].count, stats[0].avg, stats[0].max, stats[0].min],
+            [stats[1].employeename + ' ' + stats[1].count, stats[1].avg, stats[1].max, stats[1].min],
+            [stats[2].employeename + ' ' + stats[2].count, stats[2].avg, stats[2].max, stats[2].min],
+            [stats[3].employeename + ' ' + stats[3].count, stats[3].avg, stats[3].max, stats[3].min],
+            [stats[4].employeename + ' ' + stats[4].count, stats[4].avg, stats[4].max, stats[4].min]
+            ]);
+
+            const options = {
+                chart: {
+                title: 'Top 5 Employee Statistics',
+                subtitle: "Employee's Requests Averages, Max, and Min"
+                }
+            };
+
+            let chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+
+            // Pie Chart
+            let data2 = google.visualization.arrayToDataTable([
+            ['Employee', 'Sum'],
+            [stats[0].employeename, stats[0].sum],
+            [stats[1].employeename, stats[1].sum],
+            [stats[2].employeename, stats[2].sum],
+            [stats[3].employeename, stats[3].sum],
+            [stats[4].employeename, stats[4].sum]
+            ]);
+
+            const options2 = {
+                title: 'Top 5 Employee Statistics',
+                is3D: true,
+            };
+
+            let chart2 = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+            chart2.draw(data2, options2);
+        }
+
+        getStatistics();
+    }
+    </script>
+<script>
+
+function logout(){
+        localStorage.clear();
+        window.location.href = 'homepage.html'
+    }
+</script>
+</html>
